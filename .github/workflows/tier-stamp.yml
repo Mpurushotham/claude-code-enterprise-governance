@@ -1,0 +1,56 @@
+# Renders each mapped repo's tier profile into the repo as a PR — never a push.
+# Needs TIER_STAMP_TOKEN: a fine-grained org token (or GitHub App) with
+# contents:write + pull_requests:write on the mapped repos. Without it the job
+# runs in dry-run mode so forks/demos stay green.
+name: tier-stamp
+on:
+  schedule: [{ cron: "0 3 * * *" }]
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Render tier profiles and open PRs in mapped repos
+        env:
+          GH_TOKEN: ${{ secrets.TIER_STAMP_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 - <<'EOF' > /tmp/repo-tier.txt
+          import yaml
+          tiers = yaml.safe_load(open("policy/repos.yaml"))["tiers"]
+          for tier, repos in tiers.items():
+              for repo in repos:
+                  if "*" in repo:
+                      continue  # wildcard entries resolved by org search in real use
+                  print(f"{repo} {tier}")
+          EOF
+          while read -r repo tier; do
+            ci/compose.sh "$tier" | jq '{permissions: .permissions}' > /tmp/settings.json
+            if [ -z "${GH_TOKEN:-}" ]; then
+              echo "DRY-RUN: would stamp $repo with $tier:"
+              jq -c '.permissions.defaultMode' /tmp/settings.json
+              continue
+            fi
+            dir=$(mktemp -d)
+            if ! gh repo clone "$repo" "$dir" -- --depth 1 2>/dev/null; then
+              echo "skip $repo (not accessible)"; continue
+            fi
+            mkdir -p "$dir/.claude"
+            cp /tmp/settings.json "$dir/.claude/settings.json"
+            echo "$tier" > "$dir/.claude/abc-tier"
+            branch="tier-stamp/$tier-$(date +%Y%m%d)"
+            git -C "$dir" checkout -b "$branch"
+            git -C "$dir" add .claude/settings.json .claude/abc-tier
+            if git -C "$dir" diff --cached --quiet; then
+              echo "$repo already current"; continue
+            fi
+            git -C "$dir" -c user.name=tier-stamp -c user.email=sec-platform@abc-org.example \
+              commit -m "chore: stamp $tier Claude Code profile"
+            git -C "$dir" push -u origin "$branch"
+            gh pr create --repo "$repo" --head "$branch" \
+              --title "Stamp $tier Claude Code profile" \
+              --body "Automated render of policy/permissions/$tier.json from the governance repo. Merge = accept the floor for this repo."
+          done < /tmp/repo-tier.txt

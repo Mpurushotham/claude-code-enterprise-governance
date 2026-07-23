@@ -1,0 +1,35 @@
+# Supply-chain gates: dependency diff review + a lint that fails any workflow
+# using an action not pinned to a full 40-char commit SHA.
+name: dependency-review
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4
+        with:
+          fail-on-severity: high
+  pinned-actions-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Every `uses:` must be SHA-pinned
+        run: |
+          set -euo pipefail
+          bad=0
+          while IFS= read -r line; do
+            ref=$(echo "$line" | sed -E 's/^[[:space:]]*-?[[:space:]]*uses:[[:space:]]*//; s/[[:space:]]*#.*//')
+            case "$ref" in
+              ./*) continue ;;                       # local composite actions
+              *@*) sha="${ref##*@}"
+                   if ! echo "$sha" | grep -qE '^[0-9a-f]{40}$'; then
+                     echo "UNPINNED: $line"; bad=1
+                   fi ;;
+              *)   echo "UNPINNED (no ref): $line"; bad=1 ;;
+            esac
+          done < <(grep -rhE '^[[:space:]]*-?[[:space:]]*uses:' .github/workflows/)
+          exit $bad

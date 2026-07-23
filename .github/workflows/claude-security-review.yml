@@ -1,0 +1,29 @@
+# AI PR security reviewer over the Anthropic Console API.
+# Auth: ANTHROPIC_API_KEY repo/org secret — a dedicated Console workspace key,
+# spend-capped, rotated quarterly, never a human seat credential. Subscription
+# seats are for humans; CI holds the only static key in the platform.
+# Comment-only: deterministic gates (secret-scan, iac-scan, hook tests, human
+# review) remain the required checks. This workflow cannot approve or merge.
+name: claude-security-review
+on:
+  pull_request:
+    types: [opened, synchronize]
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+  actions: read
+concurrency:
+  group: csr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with: { fetch-depth: 0 }
+      - uses: anthropics/claude-code-action@44423bdec74b97d67543eb16c110546762c110b2 # v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: "/security-review"
+          claude_args: "--max-turns 12"

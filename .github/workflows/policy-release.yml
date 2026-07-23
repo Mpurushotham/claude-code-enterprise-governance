@@ -1,0 +1,44 @@
+name: policy-release
+on:
+  pull_request:
+    paths: ["policy/**", "ci/**", "plugins/**", "tests/**"]
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Compose and validate every tier
+        run: |
+          for t in tier0 tier1 tier2; do
+            ci/compose.sh "$t" > "dist/managed-settings.${t}.json"
+            ci/validate-settings.sh "dist/managed-settings.${t}.json"
+          done
+      - name: Run guardrail hook test suite
+        run: tests/test_hooks.sh
+      - name: SessionStart latency budget (< 2s, VS Code subprocess constraint)
+        run: |
+          start=$(date +%s%N)
+          plugins/abc-guardrails/hooks/session-banner.sh >/dev/null
+          dur=$(( ($(date +%s%N) - start) / 1000000 ))
+          echo "session-banner: ${dur}ms"; [ "$dur" -lt 2000 ]
+  release:
+    if: github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Build artifacts
+        run: |
+          for t in tier0 tier1 tier2; do ci/compose.sh "$t" > "dist/managed-settings.${t}.json"; done
+          cp dist/managed-settings.tier1.json dist/managed-settings.json
+          sha256sum dist/*.json > dist/SHA256SUMS
+      - name: Publish release for MDM pickup
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          tag="policy-$(date +%Y%m%d-%H%M%S)"
+          gh release create "$tag" dist/managed-settings*.json dist/SHA256SUMS \
+            --title "$tag" --notes "Composed from $GITHUB_SHA"

@@ -1,0 +1,29 @@
+# Deterministic IaC gates on the evidence infrastructure. Blocking on high
+# severity — the advisory iac-reviewer agent complements these, never replaces them.
+name: iac-scan
+on:
+  pull_request:
+    paths: ["terraform/**"]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  checkov:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: bridgecrewio/checkov-action@7b972723c44fb3d256283fac96fae5d7c1894bb7 # v12
+        with:
+          directory: terraform
+          framework: terraform
+          quiet: true
+          soft_fail: false
+  tfsec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: aquasecurity/tfsec-action@b466648d6e39e7c75324f25d83891162a721f2d6 # v1.0.3
+        with:
+          working_directory: terraform
+          soft_fail: false

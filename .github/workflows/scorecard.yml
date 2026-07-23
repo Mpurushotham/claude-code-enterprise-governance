@@ -1,0 +1,27 @@
+# OSSF Scorecard on the governance repo itself — the repo that ships the fleet
+# floor must clear the same supply-chain bar it imposes on everyone else.
+name: scorecard
+on:
+  schedule: [{ cron: "30 2 * * 1" }]
+  push:
+    branches: [main]
+permissions: read-all
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with: { persist-credentials: false }
+      - uses: ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a # v2.4.3
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: SARIF file
+          path: results.sarif
+          retention-days: 5
