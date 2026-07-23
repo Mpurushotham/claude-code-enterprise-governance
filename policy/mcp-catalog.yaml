@@ -22,3 +22,9 @@ servers:
     url: https://mcp.internal.abc-org.example/slack
     tiers: [1, 2]
     credential: "bot token; #eng-* channels only"
+  - name: context7
+    type: stdio
+    command: npx
+    args: ["-y", "@upstash/context7-mcp@1.0.14"]
+    tiers: [1, 2]
+    credential: "none; read-only public library/framework docs (the context library)"

@@ -16,6 +16,7 @@ A complete, runnable governance platform for rolling out **Claude Code on Claude
 | Evidence & telemetry (3 independent streams) | [05-evidence-and-telemetry.md](docs/architecture/05-evidence-and-telemetry.md) |
 | Distribution via MDM (self-healing) | [06-distribution-mdm.md](docs/architecture/06-distribution-mdm.md) |
 | Threat model (attack path → control matrix) | [07-threat-model.md](docs/architecture/07-threat-model.md) |
+| MCP lifecycle & the context library | [08-mcp-lifecycle.md](docs/architecture/08-mcp-lifecycle.md) |
 
 Plus: [SECURITY-GUARDRAILS.md](docs/SECURITY-GUARDRAILS.md) — every guardrail from scratch to end (blocks what, enforced by what, proven by what, evidences where) — and the phased [ENTERPRISE-ROLLOUT-PLAN.md](docs/ENTERPRISE-ROLLOUT-PLAN.md).
 

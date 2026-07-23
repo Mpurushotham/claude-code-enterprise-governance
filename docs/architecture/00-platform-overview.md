@@ -43,6 +43,7 @@ flowchart LR
 | 5 | Evidence & telemetry | [05](05-evidence-and-telemetry.md) | Three independent streams; hooks audit before they block |
 | 6 | Distribution (MDM) | [06](06-distribution-mdm.md) | Checksum-verified atomic install, root:wheel, self-healing |
 | 7 | Threat model | [07](07-threat-model.md) | The map of who is stopped where |
+| 8 | MCP lifecycle | [08](08-mcp-lifecycle.md) | Two-key rule: pinned catalog entry + floor allowlist |
 
 ## The five invariants
 
