@@ -1,0 +1,31 @@
+# Team cohort -> seat role + default tier profile.
+# Seats are provisioned via SCIM from the IdP group; the Enterprise admin console
+# assigns the role; MDM ships the tier profile matching the repos each team owns.
+# A person in two cohorts gets the MOST restrictive tier (the one-way valve applies
+# to people too).
+cohorts:
+  dev:
+    idp_group: eng-dev
+    seat_role: member
+    default_tier: tier2
+    notes: sandboxes, internal tools, docs. First rollout cohort.
+  engineering:
+    idp_group: eng-platform
+    seat_role: member
+    default_tier: tier1
+    notes: product services, APIs, pipelines.
+  product:
+    idp_group: product-eng
+    seat_role: member
+    default_tier: tier1
+    notes: customer-facing services.
+  database:
+    idp_group: db-team
+    seat_role: member
+    default_tier: tier0
+    notes: schemas, migrations, anything with prod data adjacency. Plan mode default.
+  security:
+    idp_group: sec-platform
+    seat_role: admin
+    default_tier: tier0
+    notes: owns this repo, the guardrails plugin, and the Enterprise org settings.

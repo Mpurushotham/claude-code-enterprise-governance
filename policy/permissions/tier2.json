@@ -1,0 +1,3 @@
+{ "$comment": "Tier 2: docs, internal tools, sandboxes.",
+  "permissions": { "defaultMode": "default",
+    "allow": ["Bash(make:*)", "Bash(python3:*)", "Bash(node:*)"] } }

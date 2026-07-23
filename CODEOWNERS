@@ -1,0 +1,9 @@
+*                       @abc-org/sec-platform
+/policy/                @abc-org/sec-platform
+/plugins/               @abc-org/sec-platform
+/docs/                  @abc-org/sec-platform
+/ops/                   @abc-org/sec-platform
+/terraform/             @abc-org/cloud-platform @abc-org/sec-platform
+/.github/workflows/     @abc-org/platform-eng @abc-org/sec-platform
+/agents/                @abc-org/sec-platform
+/skills/ /commands/     @abc-org/platform-eng

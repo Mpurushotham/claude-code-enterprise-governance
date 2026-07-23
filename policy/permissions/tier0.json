@@ -1,0 +1,8 @@
+{
+  "$comment": "Tier 0: database team repos, security tooling, payment/PII cores, landing zone. Plan-mode default; DB access denied outright.",
+  "permissions": {
+    "defaultMode": "plan",
+    "deny": ["Bash(psql:*)", "Bash(kubectl:*)", "Read(db/snapshots/**)"]
+  },
+  "env": { "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1" }
+}

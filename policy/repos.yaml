@@ -1,0 +1,5 @@
+# repo -> tier map. Tier changes are PRs reviewed by sec-platform (CODEOWNERS).
+tiers:
+  tier0: [abc-org/payments-core, abc-org/customer-pii-service, abc-org/db-schemas, abc-org/security-tooling, abc-org/claude-code-enterprise-governance]
+  tier1: [abc-org/product-api, abc-org/customer-portal, abc-org/data-pipelines]
+  tier2: [abc-org/docs, abc-org/internal-tools, abc-org/sandbox-*]

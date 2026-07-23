@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pii-filter.py" } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "Edit|Write|Bash",
+        "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/secrets-gate.sh" } ] },
+      { "matcher": "Bash",
+        "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/bash-sentry.sh" } ] },
+      { "matcher": "Edit|Write",
+        "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pii-filter.py" } ] }
+    ],
+    "PostToolUse": [
+      { "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/audit-scribe.sh" } ] }
+    ],
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-banner.sh" } ] }
+    ]
+  }
+}

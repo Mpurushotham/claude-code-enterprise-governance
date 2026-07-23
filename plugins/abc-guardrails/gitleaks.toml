@@ -1,0 +1,7 @@
+title = "ABC guardrails gitleaks config"
+[extend]
+useDefault = true
+[[rules]]
+id = "abc-internal-token"
+description = "ABC internal service token format"
+regex = '''abc_(live|test)_[A-Za-z0-9]{32}'''

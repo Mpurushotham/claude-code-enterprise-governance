@@ -1,0 +1,6 @@
+{
+  "name": "abc-guardrails",
+  "version": "1.0.0",
+  "description": "ABC managed guardrails: secrets gate, PII filter, bash sentry, audit scribe, session banner. Force-enabled fleet-wide via managed settings.",
+  "author": { "name": "ABC sec-platform" }
+}

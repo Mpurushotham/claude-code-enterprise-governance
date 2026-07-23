@@ -1,0 +1,24 @@
+# Approved MCP catalog. Adding a server = PR with review template + separate
+# allowlist entry in base.json (two-key rule). Versions are exact pins.
+servers:
+  - name: github
+    type: stdio
+    command: npx
+    args: ["-y", "@modelcontextprotocol/server-github@1.4.2"]
+    tiers: [0, 1, 2]
+    credential: "OAuth per-user; org-restricted app; no repo-admin scopes"
+  - name: aws-docs
+    type: http
+    url: https://mcp.internal.abc-org.example/aws-docs
+    tiers: [0, 1, 2]
+    credential: none
+  - name: grafana
+    type: http
+    url: https://mcp.internal.abc-org.example/grafana
+    tiers: [1, 2]
+    credential: "viewer service account; PII datasources excluded"
+  - name: slack
+    type: http
+    url: https://mcp.internal.abc-org.example/slack
+    tiers: [1, 2]
+    credential: "bot token; #eng-* channels only"

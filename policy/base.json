@@ -1,0 +1,53 @@
+{
+  "$comment": "Fleet floor. Composed with a tier profile by ci/compose.sh into dist/managed-settings.json. Owner: sec-platform. Inference: Claude Enterprise subscription seats (claude.ai OAuth), NOT API keys — laptops never hold static credentials.",
+  "forceLoginMethod": "claudeai",
+  "forceLoginOrgUUID": "00000000-0000-0000-0000-REPLACE-ME",
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "https://otel.internal.abc-org.example:4317",
+    "OTEL_RESOURCE_ATTRIBUTES": "org=abc,fleet=macos"
+  },
+  "permissions": {
+    "defaultMode": "default",
+    "disableBypassPermissionsMode": "disable",
+    "deny": [
+      "Read(./.env)", "Read(./.env.*)", "Read(**/.env)", "Read(**/.env.*)",
+      "Read(**/*.pem)", "Read(**/*.key)", "Read(**/id_rsa*)", "Read(**/id_ed25519*)",
+      "Read(~/.aws/**)", "Read(~/.ssh/**)", "Read(~/.config/gh/**)",
+      "Read(~/.claude/.credentials.json)",
+      "Read(**/credentials*)", "Read(**/secrets/**)",
+      "Read(**/*.tfstate)", "Read(**/*.tfstate.backup)",
+      "Bash(sudo:*)", "Bash(curl:*)", "Bash(wget:*)",
+      "Bash(git push --force:*)", "Bash(git push -f:*)",
+      "Bash(aws iam:*)", "Bash(aws sts assume-role:*)",
+      "Bash(aws secretsmanager get-secret-value:*)", "Bash(aws kms decrypt:*)",
+      "Bash(aws s3 rm:*)", "Bash(aws s3 rb:*)",
+      "Bash(terraform apply:*)", "Bash(terraform destroy:*)",
+      "Bash(cdk deploy:*)", "Bash(cdk destroy:*)",
+      "Bash(gh secret:*)", "Bash(npm publish:*)", "Bash(docker push:*)",
+      "Edit(.claude/settings.json)", "Edit(.claude/hooks/**)",
+      "Edit(.github/workflows/**)", "Edit(CODEOWNERS)",
+      "WebFetch"
+    ],
+    "ask": [
+      "Bash(git push:*)", "Bash(git rebase:*)", "Bash(gh pr merge:*)",
+      "Bash(aws:*)", "Bash(terraform plan:*)", "Bash(cdk diff:*)", "Bash(cdk synth:*)",
+      "Bash(docker build:*)", "Bash(kubectl:*)", "Bash(psql:*)"
+    ],
+    "allow": [
+      "Bash(git status)", "Bash(git diff:*)", "Bash(git log:*)",
+      "Bash(git add:*)", "Bash(git commit:*)",
+      "Bash(npm run build:*)", "Bash(npm run test:*)", "Bash(npm run lint:*)",
+      "Bash(pnpm test:*)", "Bash(pytest:*)", "Bash(go test:*)",
+      "Bash(gh pr view:*)", "Bash(gh pr diff:*)", "Bash(gh issue view:*)"
+    ],
+    "additionalDirectories": []
+  },
+  "allowManagedHooksOnly": true,
+  "allowedHookUrls": ["https://guardrails.internal.abc-org.example/*"],
+  "strictKnownMarketplaces": [{ "source": "github", "repo": "abc-org/claude-plugins" }],
+  "enabledPlugins": { "abc-guardrails@abc-marketplace": true }
+}
