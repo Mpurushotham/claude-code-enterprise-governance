@@ -9,3 +9,14 @@ variable "audit_bucket_name" {
   type    = string
   default = "abc-claude-audit-evidence"
 }
+
+variable "access_log_bucket_name" {
+  description = "Existing bucket that receives S3 server access logs for the evidence bucket (e.g. the org log-archive bucket)."
+  type        = string
+}
+
+variable "noncurrent_retention_days" {
+  description = "Days to keep superseded (noncurrent) evidence object versions."
+  type        = number
+  default     = 365
+}
